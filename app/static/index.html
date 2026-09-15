@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Автобанкрот — автомобили с торгов по банкротству</title>
+  <meta name="description" content="Поиск автомобилей с торгов по банкротству: ЕФРСБ и торгов-россии.рф. Фото, цена, состояние." />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/">
+        <svg class="brand-logo" viewBox="0 0 44 44" width="40" height="40" aria-hidden="true">
+          <defs>
+            <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#2f6bff"/>
+              <stop offset="1" stop-color="#1b3fbf"/>
+            </linearGradient>
+          </defs>
+          <rect x="1.5" y="1.5" width="41" height="41" rx="12" fill="url(#lg)"/>
+          <path d="M10 26.5h24" stroke="#fff" stroke-width="2.2" stroke-linecap="round" opacity=".35"/>
+          <path d="M12.5 26.5l2-5.8a2.4 2.4 0 0 1 2.2-1.6h10.6a2.4 2.4 0 0 1 2.2 1.6l2 5.8"
+                stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="17" cy="27" r="2.6" fill="#fff"/>
+          <circle cx="27" cy="27" r="2.6" fill="#fff"/>
+        </svg>
+        <span class="brand-text"><b>Автобанкрот</b><small>торги по банкротству</small></span>
+      </a>
+      <nav class="header-nav">
+        <a href="#lots">Лоты</a>
+        <a href="#filters">Фильтры</a>
+      </nav>
+      <div class="header-actions">
+        <span id="adminBadge" class="admin-badge hidden">Администратор</span>
+        <button id="btnAdmin" class="btn btn-ghost">Войти</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container hero-inner">
+      <h1>Автомобили с торгов по банкротству</h1>
+      <p class="hero-sub">Единый поиск по ЕФРСБ и торгов-россии.рф — цена, фото, состояние, контакты управляющего</p>
+      <div class="hero-search">
+        <span class="search-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M10.5 3a7.5 7.5 0 1 0 4.6 13.4l4.2 4.3 1.4-1.4-4.3-4.2A7.5 7.5 0 0 0 10.5 3Zm0 2a5.5 5.5 0 1 1 0 11 5.5 5.5 0 0 1 0-11Z" fill="currentColor"/></svg>
+        </span>
+        <input id="fSearch" type="text" placeholder="Марка, модель, VIN, должник…" autocomplete="off" />
+        <button id="btnSearch" class="btn btn-primary btn-lg">Найти</button>
+      </div>
+      <div class="hero-stats" id="heroStats">
+        <span><b id="statTotal">–</b> лотов</span>
+        <span><b id="statPhoto">–</b> с фото</span>
+        <span><b id="statCars">–</b> легковых</span>
+        <span><b id="statSpecial">–</b> спецтехники</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="container filters card" id="filters">
+    <div class="filters-grid">
+      <label class="field">
+        <span>Марка</span>
+        <select id="fMake" class="in"><option value="">любая</option></select>
+      </label>
+      <label class="field">
+        <span>Модель</span>
+        <select id="fModel" class="in" disabled><option value="">любая</option></select>
+      </label>
+      <label class="field">
+        <span>VIN</span>
+        <input id="fVin" class="in" type="text" placeholder="17 символов" maxlength="17" />
+      </label>
+      <label class="field">
+        <span>Год от</span>
+        <select id="fYearFrom" class="in"><option value="">любой</option></select>
+      </label>
+      <label class="field">
+        <span>Год до</span>
+        <select id="fYearTo" class="in"><option value="">любой</option></select>
+      </label>
+      <label class="field">
+        <span>Тип торгов</span>
+        <select id="fTradeKind" class="in"><option value="">все</option></select>
+      </label>
+      <label class="field">
+        <span>Вид торгов</span>
+        <select id="fTradeType" class="in"><option value="">все</option></select>
+      </label>
+      <label class="field">
+        <span>Статус</span>
+        <select id="fStatus" class="in"><option value="">все</option></select>
+      </label>
+      <label class="field">
+        <span>Категория</span>
+        <select id="fCategory" class="in"><option value="">все</option></select>
+      </label>
+      <label class="field">
+        <span>Регион</span>
+        <select id="fRegion" class="in"><option value="">все</option></select>
+      </label>
+      <label class="field">
+        <span>Способ реализации</span>
+        <select id="fSale" class="in"><option value="">все</option></select>
+      </label>
+      <label class="field">
+        <span>Источник</span>
+        <select id="fSource" class="in">
+          <option value="">все</option>
+          <option value="торги-россии">Торги-России</option>
+          <option value="lot-online">Лот-Онлайн</option>
+          <option value="auction-house">Аукционный Дом</option>
+          <option value="fedresurs">ЕФРСБ</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Сортировка</span>
+        <select id="fSort" class="in">
+          <option value="published_desc">Сначала новые</option>
+          <option value="published_asc">Сначала старые</option>
+          <option value="price_desc">Цена: по убыванию</option>
+          <option value="price_asc">Цена: по возрастанию</option>
+          <option value="photos_desc">Больше фото</option>
+        </select>
+      </label>
+      <label class="field admin-only hidden">
+        <span>Email</span>
+        <select id="fEmail" class="in">
+          <option value="">все</option>
+          <option value="not_sent">не отправлен</option>
+          <option value="sent">запрос отправлен</option>
+          <option value="responded">есть ответ</option>
+          <option value="bounced">не доставлено</option>
+        </select>
+      </label>
+      <div class="field field-actions">
+        <label class="chk"><input id="fHasPhoto" type="checkbox" /> только с фото</label>
+        <button id="btnReset" class="btn btn-ghost">Сбросить</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="container" id="lots">
+    <div class="section-head">
+      <h2 id="resultsTitle">Лоты</h2>
+      <span id="resultsCount" class="muted"></span>
+    </div>
+    <div class="spinner hidden" id="spinner">Загрузка…</div>
+    <section id="lotsGrid" class="lots-list"></section>
+    <div id="pagination" class="pagination"></div>
+  </section>
+
+  <!-- Панель администратора -->
+  <section class="container admin-panel hidden" id="adminPanel">
+    <div class="admin-head">
+      <h2>Панель администратора</h2>
+      <span id="scrapeStatus" class="status-chip"></span>
+    </div>
+    <div class="admin-actions">
+      <button id="btnScrape" class="btn btn-primary">Обновить ЕФРСБ</button>
+      <button id="btnScrapePlatforms" class="btn btn-secondary">Площадки</button>
+      <button id="btnScrapeTorgi" class="btn btn-torgi">Торги-России</button>
+      <button id="btnEmailSend" class="btn btn-email">Email запросы</button>
+      <button id="btnEmailCheck" class="btn btn-email-check">Проверить ответы</button>
+      <button id="btnLogout" class="btn btn-ghost">Выйти</button>
+    </div>
+    <div class="email-strip card"><b>Email-рассылка:</b> <span id="emailConfig">…</span></div>
+
+    <section class="events card">
+      <div class="events-head">
+        <h3>Журнал действий <span class="muted" id="eventsCount"></span></h3>
+        <span class="events-tools">
+          <a id="eventsLogLink" href="/api/events/log?tail=5000" target="_blank">полный лог за всё время</a>
+          <span class="muted" id="eventsUpdated"></span>
+        </span>
+      </div>
+      <div id="eventsList" class="events-list">загрузка…</div>
+    </section>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="foot-brand">
+        <svg class="brand-logo sm" viewBox="0 0 44 44" width="26" height="26" aria-hidden="true">
+          <rect x="1.5" y="1.5" width="41" height="41" rx="12" fill="#2f6bff"/>
+          <path d="M12.5 26.5l2-5.8a2.4 2.4 0 0 1 2.2-1.6h10.6a2.4 2.4 0 0 1 2.2 1.6l2 5.8"
+                stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="17" cy="27" r="2.6" fill="#fff"/><circle cx="27" cy="27" r="2.6" fill="#fff"/>
+        </svg>
+        <span>Автобанкрот</span>
+      </div>
+      <p class="muted">Данные — ЕФРСБ и торгов-россии.рф. Фото из открытых источников могут не соответствовать имуществу.</p>
+    </div>
+  </footer>
+
+  <!-- Детали лота -->
+  <div id="overlay" class="overlay hidden">
+    <div class="modal card">
+      <button id="btnClose" class="modal-close">×</button>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- Вход администратора -->
+  <div id="loginOverlay" class="overlay hidden">
+    <div class="modal card login-modal">
+      <button id="btnLoginClose" class="modal-close">×</button>
+      <h2>Вход администратора</h2>
+      <p class="muted">Расширенные функции и журнал доступны после ввода пароля</p>
+      <input id="adminPassword" type="password" class="in" placeholder="Пароль" autocomplete="current-password" />
+      <div class="login-actions">
+        <button id="btnLoginSubmit" class="btn btn-primary">Войти</button>
+      </div>
+      <div id="loginError" class="login-error"></div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

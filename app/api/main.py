@@ -1,0 +1,38 @@
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse
+from fastapi import FastAPI
+
+from app.api.routes import router
+from app.config import DATA_DIR, settings
+from app.db import init_db
+from pathlib import Path
+
+STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
+
+
+def create_app() -> FastAPI:
+    app = FastAPI(title="EFRSB Aggregator", version="0.1.0", docs_url="/api/docs", openapi_url="/api/openapi.json")
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+    settings.ensure_dirs()
+    init_db()
+    from app.db import add_event
+
+    add_event("system", "Сервис запущен")
+    from app.email_worker import start_email_workers
+    from app.scrape_worker import start_scrape_worker
+
+    start_email_workers()
+    start_scrape_worker()
+    app.include_router(router, prefix="/api")
+    app.mount("/data", StaticFiles(directory=str(DATA_DIR)), name="data")
+    app.mount("/", StaticFiles(directory=str(STATIC_DIR), html=True), name="static")
+    return app
+
+
+app = create_app()

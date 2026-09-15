@@ -1,0 +1,27 @@
+# Секреты и локальная конфигурация
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+
+# Сгенерированные данные (БД, фото, снапшоты, логи, оффлайн-фикстуры)
+data/
+
+# Node (если понадобится фронтенд-сборка)
+node_modules/
+
+# Системные файлы
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+
+# IDE
+.idea/
+.vscode/
+*.iml
