@@ -77,7 +77,7 @@ class Settings:
         self.port: int = _env_int("EFRSB_PORT", 8000)
         self.verbose: bool = _env_bool("EFRSB_VERBOSE", True)
         # Пароль администратора (расширенные функции и журнал)
-        self.admin_password: str = os.getenv("ADMIN_PASSWORD", "0000")
+        self.admin_password: str = os.getenv("ADMIN_PASSWORD", "")
 
         # Email
         self.email_smtp_host: str = os.getenv("EMAIL_SMTP_HOST", "")
@@ -106,9 +106,9 @@ class Settings:
         self.email2_use_tls: bool = _env_bool("EMAIL2_USE_TLS", True)
         # Шаблон письма
         self.email_subject: str = os.getenv("EMAIL_SUBJECT", "Запрос доп. информации по имуществу")
-        self.email_signature: str = os.getenv("EMAIL_SIGNATURE", "Евгений Смирнов")
+        self.email_signature: str = os.getenv("EMAIL_SIGNATURE", "")
         # Авто-рассылка запросов управляющим (запускается при старте приложения)
-        self.email_auto_send: bool = _env_bool("EMAIL_AUTO_SEND", True)
+        self.email_auto_send: bool = _env_bool("EMAIL_AUTO_SEND", False)
         self.email_auto_send_delay_min: int = _env_int("EMAIL_AUTO_SEND_DELAY_MIN", 2)
         self.email_send_interval_min: int = _env_int("EMAIL_SEND_INTERVAL_MIN", 60)
         self.email_batch_size: int = _env_int("EMAIL_BATCH_SIZE", 20)
@@ -142,3 +142,4 @@ class Settings:
 
 
 settings = Settings()
+
