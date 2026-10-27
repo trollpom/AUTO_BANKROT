@@ -53,6 +53,63 @@ def admin_logout(x_admin_token: str = Header(default="")):
     return {"ok": True}
 
 
+# Analysis is opt-in and admin-only, including saved reports and offline arithmetic.
+from app.analysis.schemas import AnalysisRequest, Inputs
+from app.analysis.settings import AnalysisSettings
+from app.analysis.provider import ProviderError
+from app.analysis import service as analysis_service, store as analysis_store
+
+
+def analysis_lot(lot_id):
+    lot = get_lot(lot_id)
+    if not lot:
+        raise HTTPException(404, "Лот не найден")
+    return lot
+
+
+@router.get("/ai/status", dependencies=[Depends(require_admin)])
+def ai_status():
+    return AnalysisSettings.from_env().public_status()
+
+
+@router.post("/lots/{lot_id}/analysis/calculate", dependencies=[Depends(require_admin)])
+def analysis_calculate(lot_id: int, req: Inputs):
+    try:
+        return analysis_service.offline(analysis_lot(lot_id), req)
+    except ValueError:
+        raise HTTPException(422, "Не удалось определить автомобиль. Уточните марку, модель и год") from None
+
+
+@router.post("/lots/{lot_id}/analysis", status_code=202, dependencies=[Depends(require_admin)])
+def analysis_start(lot_id: int, req: AnalysisRequest):
+    try:
+        return analysis_service.submit(analysis_lot(lot_id), req, AnalysisSettings.from_env())
+    except analysis_store.RunConflict as error:
+        raise HTTPException(429 if error.code == "daily_limit" else 409, error.public_message) from None
+    except ProviderError as error:
+        raise HTTPException(503, error.public_message) from None
+    except ValueError as error:
+        raise HTTPException(422, str(error)) from None
+
+
+@router.get("/lots/{lot_id}/analysis", dependencies=[Depends(require_admin)])
+def analysis_history(lot_id: int):
+    lot = analysis_lot(lot_id)
+    data = analysis_store.history(lot_id)
+    for key in ("latest", "last_success"):
+        analysis_service.mark_staleness(data[key], lot)
+    return data
+
+
+@router.get("/lots/{lot_id}/analysis/runs/{run_id}", dependencies=[Depends(require_admin)])
+def analysis_run(lot_id: int, run_id: str):
+    lot = analysis_lot(lot_id)
+    run = analysis_store.get_run(lot_id, run_id)
+    if not run:
+        raise HTTPException(404, "Отчёт не найден")
+    return analysis_service.mark_staleness(run, lot)
+
+
 class ScrapeRequest(BaseModel):
     date_from: str = ""
     date_to: str = ""
@@ -373,3 +430,4 @@ def send_email_for_lot(lot_id: int):
     if ok:
         set_email_status(lot_id, "sent", email_sent_at=utcnow())
     return {"sent": ok, "email": lot.get("contact_email")}
+

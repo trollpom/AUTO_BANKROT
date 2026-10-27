@@ -4,7 +4,7 @@ from fastapi.responses import RedirectResponse
 from fastapi import FastAPI
 
 from app.api.routes import router
-from app.config import DATA_DIR, settings
+from app.config import PHOTOS_DIR, settings
 from app.db import init_db
 from pathlib import Path
 
@@ -21,6 +21,9 @@ def create_app() -> FastAPI:
     )
     settings.ensure_dirs()
     init_db()
+    from app.analysis.store import init_store
+
+    init_store(recover=True)
     from app.db import add_event
 
     add_event("system", "Сервис запущен")
@@ -30,7 +33,8 @@ def create_app() -> FastAPI:
     start_email_workers()
     start_scrape_worker()
     app.include_router(router, prefix="/api")
-    app.mount("/data", StaticFiles(directory=str(DATA_DIR)), name="data")
+    # Never expose the SQLite DB, email artifacts, logs or snapshots as static files.
+    app.mount("/data/photos", StaticFiles(directory=str(PHOTOS_DIR)), name="photos")
     app.mount("/", StaticFiles(directory=str(STATIC_DIR), html=True), name="static")
     return app
 
