@@ -1,5 +1,8 @@
 # Секреты и локальная конфигурация
 .env
+.env.*
+.env-*
+!.env.example
 
 # Python
 __pycache__/

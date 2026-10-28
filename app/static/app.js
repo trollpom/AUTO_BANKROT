@@ -126,12 +126,16 @@ async function api(path, opts = {}) {
     applyAdminUI();
     throw new Error("Требуется вход администратора");
   }
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  if (!r.ok) {
+    const error = await r.json().catch(() => ({}));
+    throw new Error(typeof error.detail === "string" ? error.detail : `Ошибка входных данных или запроса (HTTP ${r.status})`);
+  }
   return r.json();
 }
 
 function applyAdminUI() {
   const on = isAdmin();
+  if (!on) { window.LotAnalysis.unmount(); document.querySelector("#lotAnalysis")?.remove(); }
   document.querySelectorAll(".admin-only").forEach((el) => el.classList.toggle("hidden", !on));
   els.adminPanel.classList.toggle("hidden", !on);
   els.adminBadge.classList.toggle("hidden", !on);
@@ -432,6 +436,7 @@ function priceChartHtml(history, decrease) {
 }
 
 function renderDetail(lot) {
+  window.LotAnalysis.unmount();
   const photos = (lot.photos || []).filter((p) => p.local_path);
   const gallery = photos.length
     ? `<div class="gallery">${photos.map((p) =>
@@ -530,12 +535,14 @@ function renderDetail(lot) {
     <div class="detail-desc">${esc(lot.description || "нет описания")}</div>
     ${lot.acquaintance_order ? `<h3>Порядок ознакомления</h3><div class="detail-desc">${esc(lot.acquaintance_order)}</div>` : ""}
     ${conditionHtml}
+    ${isAdmin() ? window.LotAnalysis.shell(lot) : ""}
     <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
       ${adminButtons}
       ${lot.source_url ? `<a class="btn btn-ghost" href="${esc(lot.source_url)}" target="_blank">Источник</a>` : ""}
       ${lot.platform_lot_url ? `<a class="btn btn-ghost" href="${esc(lot.platform_lot_url)}" target="_blank">Торговая площадка</a>` : ""}
     </div>`;
 
+  if (isAdmin()) window.LotAnalysis.mount($("#lotAnalysis"), lot, api);
   const b = $("#btnSearchPhotos");
   if (b) b.onclick = async () => {
     b.disabled = true; b.textContent = "Поиск…";
@@ -649,10 +656,11 @@ els.btnLoginSubmit.onclick = adminLogin;
 els.adminPassword.addEventListener("keydown", (e) => { if (e.key === "Enter") adminLogin(); });
 els.btnLogout.onclick = adminLogout;
 
-els.btnClose.onclick = () => els.overlay.classList.add("hidden");
-els.overlay.addEventListener("click", (e) => { if (e.target === els.overlay) els.overlay.classList.add("hidden"); });
+const closeLot = () => { window.LotAnalysis.unmount(); els.overlay.classList.add("hidden"); };
+els.btnClose.onclick = closeLot;
+els.overlay.addEventListener("click", (e) => { if (e.target === els.overlay) closeLot(); });
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") { els.overlay.classList.add("hidden"); els.loginOverlay.classList.add("hidden"); }
+  if (e.key === "Escape") { closeLot(); els.loginOverlay.classList.add("hidden"); }
 });
 
 // ---- init ----
@@ -666,3 +674,4 @@ document.addEventListener("keydown", (e) => {
   loadLots();
   setInterval(loadStats, 60000);
 })();
+
