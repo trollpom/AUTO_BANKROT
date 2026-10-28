@@ -12,7 +12,7 @@ STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 
 
 def create_app() -> FastAPI:
-    app = FastAPI(title="EFRSB Aggregator", version="0.1.0", docs_url="/api/docs", openapi_url="/api/openapi.json")
+    app = FastAPI(title="car_lot_pilot", version="0.1.0", docs_url="/api/docs", openapi_url="/api/openapi.json")
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],

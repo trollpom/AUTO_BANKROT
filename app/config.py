@@ -88,7 +88,7 @@ class Settings:
         self.email_imap_port: int = _env_int("EMAIL_IMAP_PORT", 993)
         self.email_imap_user: str = os.getenv("EMAIL_IMAP_USER", "")
         self.email_imap_password: str = os.getenv("EMAIL_IMAP_PASSWORD", "")
-        self.email_from_name: str = os.getenv("EMAIL_FROM_NAME", "Автобанкрот")
+        self.email_from_name: str = os.getenv("EMAIL_FROM_NAME", "car_lot_pilot")
         self.email_from: str = os.getenv("EMAIL_FROM", "")
         self.email_use_tls: bool = _env_bool("EMAIL_USE_TLS", True)
         # Вторая почта — для повторной отправки недоставленных писем
@@ -101,7 +101,7 @@ class Settings:
         self.email2_imap_port: int = _env_int("EMAIL2_IMAP_PORT", 993)
         self.email2_imap_user: str = os.getenv("EMAIL2_IMAP_USER", "")
         self.email2_imap_password: str = os.getenv("EMAIL2_IMAP_PASSWORD", "")
-        self.email2_from_name: str = os.getenv("EMAIL2_FROM_NAME", os.getenv("EMAIL_FROM_NAME", "Автобанкрот"))
+        self.email2_from_name: str = os.getenv("EMAIL2_FROM_NAME", os.getenv("EMAIL_FROM_NAME", "car_lot_pilot"))
         self.email2_from: str = os.getenv("EMAIL2_FROM", "")
         self.email2_use_tls: bool = _env_bool("EMAIL2_USE_TLS", True)
         # Шаблон письма

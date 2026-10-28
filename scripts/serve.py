@@ -14,7 +14,7 @@ def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(name)s] %(levelname)s: %(message)s")
     settings.ensure_dirs()
     print()
-    print("  ЕФРСБ-агрегатор запущен")
+    print("  car_lot_pilot запущен")
     print(f"  UI:        http://{settings.host}:{settings.port}/")
     print(f"  API-доки:  http://{settings.host}:{settings.port}/api/docs")
     print()

@@ -12,7 +12,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 # Configure isolation BEFORE app imports: do not touch a developer's DB or workers.
-TEMP = tempfile.TemporaryDirectory(prefix="autobankrot-test-")
+TEMP = tempfile.TemporaryDirectory(prefix="car_lot_pilot-test-")
 os.environ.update(EFRSB_DATA=TEMP.name, EFRSB_DB=str(Path(TEMP.name) / "efrsb.db"),
                   EMAIL_AUTO_SEND="0", EMAIL_AUTO_CHECK="0", TORGI_AUTO_SCRAPE="0", EMAIL2_ENABLED="0",
                   ADMIN_PASSWORD="offline-test-only", DEEPSEEK_API_KEY="")

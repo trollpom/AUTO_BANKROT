@@ -47,7 +47,7 @@ class EmailService:
         imap_port: int = 993,
         imap_user: str = "",
         imap_password: str = "",
-        from_name: str = "Автобанкрот",
+        from_name: str = "car_lot_pilot",
         from_email: str = "",
         use_tls: bool = True,
         subject: str = "Запрос доп. информации по имуществу",
