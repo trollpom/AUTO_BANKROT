@@ -21,6 +21,7 @@ class AnalysisSettings:
     cache_minutes: int = 30
     max_seconds: int = 240
     max_tokens: int = 4000
+    request_timeout_seconds: int = 120
 
     @classmethod
     def from_env(cls):
@@ -34,6 +35,7 @@ class AnalysisSettings:
             cache_minutes=bounded_int("AI_ANALYSIS_CACHE_MINUTES", 30, 1, 120),
             max_seconds=bounded_int("AI_ANALYSIS_MAX_SECONDS", 240, 30, 600),
             max_tokens=bounded_int("AI_ANALYSIS_MAX_TOKENS", 4000, 512, 8000),
+            request_timeout_seconds=bounded_int("AI_ANALYSIS_REQUEST_TIMEOUT_SECONDS", 120, 15, 180),
         )
 
     def public_status(self):

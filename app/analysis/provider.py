@@ -37,7 +37,7 @@ class DeepSeekClient:
             with self.session.post(
                 self.ORIGIN + path, json=payload,
                 headers={"Authorization": "Bearer " + self.settings.api_key, "Content-Type": "application/json"},
-                timeout=(min(5, remaining), min(60, remaining)), allow_redirects=False, stream=True,
+                timeout=(min(10, remaining), min(self.settings.request_timeout_seconds, remaining)), allow_redirects=False, stream=True,
             ) as response:
                 status = response.status_code
                 if status != 200:
