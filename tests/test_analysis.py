@@ -235,6 +235,13 @@ class APIAndStoreTests(unittest.TestCase):
         data.update(changes)
         return AnalysisRequest(**data)
 
+    def test_make_count_matches_filter_ui_contract(self):
+        response = self.client.get("/api/makes")
+        self.assertEqual(response.status_code, 200)
+        item = next(row for row in response.json()["items"] if row["value"] == "Toyota")
+        self.assertEqual(item["cnt"], 1)
+        self.assertEqual(item["c"], 1)
+
     def test_auth_missing_key_and_offline_calculator(self):
         for method,path,body in (("get","/api/ai/status",None),("get",self.path,None),("post",self.path+"/calculate",{}),("post",self.path,self.request().model_dump(mode="json"))):
             self.assertEqual(self.client.request(method,path,json=body).status_code,401)

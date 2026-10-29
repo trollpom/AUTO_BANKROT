@@ -257,7 +257,7 @@ def makes():
            WHERE make IS NOT NULL AND make != ''
            GROUP BY make ORDER BY c DESC, make"""
     )
-    return {"items": rows}
+    return {"items": [{**row, "cnt": row["c"]} for row in rows]}
 
 
 @router.get("/models")
