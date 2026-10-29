@@ -299,3 +299,6 @@ select.in { appearance: none; background-image: url("data:image/svg+xml;utf8,<sv
   .detail-grid { grid-template-columns: 1fr; gap: 2px; }
   .detail-grid dt { margin-top: 5px; }
 }
+
+/* Allow the Russian product name to wrap beside the sign-in action. */
+.brand,.brand-text{min-width:0}.brand-logo,.header-actions{flex-shrink:0}
